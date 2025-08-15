@@ -1,0 +1,30 @@
+name: Update Control JSON
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout published branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Fetch JSON from Apps Script
+        run: |
+          mkdir -p data
+          curl -s -L "https://script.google.com/macros/s/AKfycbz6blJaq93pJR6CjmtBNVBqawRtMNr1kXn6-ukd2uW2i_Q-eXtJ0s8WTDt_G02ypdbaQQ/exec" \
+            -o control.json
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add control.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update control.json"
+          git push
