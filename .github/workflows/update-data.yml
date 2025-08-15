@@ -1,5 +1,8 @@
 name: Update Control JSON
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: "*/5 * * * *"
